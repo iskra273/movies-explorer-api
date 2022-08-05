@@ -18,9 +18,9 @@ const options = {
   origin: [
     'http://localhost:3000',
     'http://movies.iskra273.nomoredomains.sbs',
-    'https://mesto.iskra273.nomoredomains.xyz',
+    'https://movies.iskra273.nomoredomains.sbs',
     'http://api.movies.iskra273.nomoredomains.sbs',
-    'https://api.mesto.iskra273.nomoredomains.xyz',
+    'https://api.movies.iskra273.nomoredomains.sbs',
     'https://github.com/iskra273',
   ],
   credentials: true,
