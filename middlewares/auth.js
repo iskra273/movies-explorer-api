@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/UnauthorizedError');
-// const { emailPasswordError } = require('./utils/constants');
+const { emailPasswordError } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new UnauthorizedError('Неверный пароль или email'));
+    next(new UnauthorizedError(emailPasswordError));
     return;
   }
 
@@ -23,7 +23,7 @@ module.exports = (req, res, next) => {
       NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
     );
   } catch (err) {
-    next(new UnauthorizedError('Неверный пароль или email'));
+    next(new UnauthorizedError(emailPasswordError));
     return;
   }
   // записываем пейлоуд в объект запроса

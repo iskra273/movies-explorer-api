@@ -1,7 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
 
-// const regular = /(https?:\/\/)([www.]?[a-zA-Z0-9-]+\.)([^\s]{2,})/;
-
 const validateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),

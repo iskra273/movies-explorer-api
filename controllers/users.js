@@ -4,7 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
-// const { userNotFoundError, dataError, userEmailError } = require('./utils/constants');
+const { userNotFoundError, dataError, userEmailError } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -13,7 +13,7 @@ module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Нет пользователя с таким id');
+        throw new NotFoundError(userNotFoundError);
       }
       res.send(user);
     })
@@ -35,8 +35,15 @@ module.exports.createUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: 'Ошибка сервера' });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError(dataError));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new ConflictError(userEmailError));
+        return;
+      }
+      next(err);
     });
 };
 
@@ -51,13 +58,13 @@ module.exports.updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Нет пользователя с таким id');
+        throw new NotFoundError(userNotFoundError);
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Данные некорректны'));
+        next(new BadRequestError(dataError));
         return;
       }
       next(err);
@@ -71,7 +78,6 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       // аутентификация успешна, пользователь в переменной user
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', { expiresIn: '7d' });
-      // вернём токен
       res.send({ token });
     })
     .catch(next);

@@ -12,8 +12,7 @@ const NotFoundError = require('./errors/NotFoundError');
 const { validateLogin, validateCreateUser } = require('./middlewares/validator');
 const { requestLogger } = require('./middlewares/request');
 const { errorLogger } = require('./middlewares/error');
-// const { notFoundError, serverError, crashTest } = require('./utils/constants');
-// const { MONGO_URL } = require('./config');
+const { notFoundError, serverError, crashTest } = require('./utils/constants');
 
 const options = {
   origin: [
@@ -45,7 +44,7 @@ app.use(requestLogger);
 // краш-тест сервера
 app.get('/crash-test', () => {
   setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
+    throw new Error(crashTest);
   }, 0);
 });
 
@@ -53,13 +52,12 @@ app.post('/signin', validateLogin, login);
 app.post('/signup', validateCreateUser, createUser);
 app.use('/', auth, usersRouter);
 app.use('/', auth, moviesRouter);
-// app.use('/', auth, router);
 
 // подключаем логгер ошибок
 app.use(errorLogger);
 
 app.use((req, res, next) => {
-  next(new NotFoundError('Страница не найдена'));
+  next(new NotFoundError(notFoundError));
 });
 
 app.use(errors());
@@ -71,7 +69,7 @@ app.use((err, req, res, next) => {
     .status(statusCode)
     .send({
       message: statusCode === 500
-        ? 'Ошибка сервера'
+        ? serverError
         : message,
     });
 });

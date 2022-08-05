@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-// const { urlError } = require('./utils/constants');
+const { urlError } = require('../utils/constants');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -27,19 +27,19 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validator: (url) => validator.isURL(url),
-    message: 'Неверный URL',
+    message: urlError,
   },
   trailerLink: {
     type: String,
     required: true,
     validator: (url) => validator.isURL(url),
-    message: 'Неверный URL',
+    message: urlError,
   },
   thumbnail: {
     type: String,
     required: true,
     validator: (url) => validator.isURL(url),
-    message: 'Неверный URL',
+    message: urlError,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

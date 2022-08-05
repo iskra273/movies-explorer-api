@@ -2,7 +2,7 @@ const Movie = require('../models/movie');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ForbiddenError = require('../errors/ForbiddenError');
-// const { dataError, movieNotFoundError, deleteMovieError } = require('./utils/constants');
+const { dataError, movieNotFoundError, deleteMovieError } = require('../utils/constants');
 
 // возвращает все карточки
 module.exports.getMovies = (req, res, next) => {
@@ -36,7 +36,7 @@ module.exports.createMovie = (req, res, next) => {
     .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Данные некорректны'));
+        next(new BadRequestError(dataError));
       } else {
         next(err);
       }
@@ -48,10 +48,10 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError('Карточка не найдена');
+        throw new NotFoundError(movieNotFoundError);
       }
       if (movie.owner.toString() !== req.user._id) {
-        throw new ForbiddenError('Недостаточно прав для удаления карточки');
+        throw new ForbiddenError(deleteMovieError);
       }
       Movie.findByIdAndRemove(req.params.movieId)
         .then(() => res.status(200).send(movie))
