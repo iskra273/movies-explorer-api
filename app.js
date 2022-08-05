@@ -12,24 +12,23 @@ const NotFoundError = require('./errors/NotFoundError');
 const { validateLogin, validateCreateUser } = require('./middlewares/validator');
 const { requestLogger } = require('./middlewares/request');
 const { errorLogger } = require('./middlewares/error');
-
-// const { PORT = 3000, MONGODB = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+// const { notFoundError, serverError, crashTest } = require('./utils/constants');
+// const { MONGO_URL } = require('./config');
 
 const options = {
   origin: [
     'http://localhost:3000',
     'http://movies.iskra273.nomoredomains.sbs',
-    // 'https://mesto.iskra273.nomoredomains.xyz',
+    'https://mesto.iskra273.nomoredomains.xyz',
     'http://api.movies.iskra273.nomoredomains.sbs',
-    // 'https://api.mesto.iskra273.nomoredomains.xyz',
+    'https://api.mesto.iskra273.nomoredomains.xyz',
     'https://github.com/iskra273',
   ],
   credentials: true,
 };
 
-// убрать
-const { PORT = 3001 } = process.env;
-
+const { PORT = 3000 } = process.env;
+// const { PORT = 3000, MONGO_DB = 'mongodb://localhost:27017/moviesdb' } = process.env;
 const app = express();
 
 app.use('*', cors(options));
@@ -38,7 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb');
-// mongoose.connect(MONGODB);
+// mongoose.connect(MONGO_DB);
 
 // подключаем логгер запросов
 app.use(requestLogger);
@@ -54,6 +53,7 @@ app.post('/signin', validateLogin, login);
 app.post('/signup', validateCreateUser, createUser);
 app.use('/', auth, usersRouter);
 app.use('/', auth, moviesRouter);
+// app.use('/', auth, router);
 
 // подключаем логгер ошибок
 app.use(errorLogger);

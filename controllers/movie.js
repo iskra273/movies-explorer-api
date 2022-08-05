@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ForbiddenError = require('../errors/ForbiddenError');
+// const { dataError, movieNotFoundError, deleteMovieError } = require('./utils/constants');
 
 // возвращает все карточки
 module.exports.getMovies = (req, res, next) => {
