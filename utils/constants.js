@@ -10,6 +10,7 @@ const urlError = 'Неверный URL';
 const notFoundError = 'Страница не найдена';
 const serverError = 'Ошибка сервера';
 const crashTest = 'Сервер сейчас упадёт';
+const notAuthError = 'Необходима авторизация';
 
 module.exports = {
   dataError,
@@ -23,4 +24,5 @@ module.exports = {
   notFoundError,
   serverError,
   crashTest,
+  notAuthError,
 };

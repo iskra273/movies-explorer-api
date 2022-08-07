@@ -45,7 +45,9 @@ module.exports.createMovie = (req, res, next) => {
 
 // удаляет карточку по идентификатору
 module.exports.deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  const { movieId } = req.params;
+
+  Movie.findById(movieId)
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError(movieNotFoundError);
@@ -53,7 +55,7 @@ module.exports.deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ForbiddenError(deleteMovieError);
       }
-      Movie.findByIdAndRemove(req.params.movieId)
+      Movie.findByIdAndRemove(movieId)
         .then(() => res.status(200).send(movie))
         .catch(next);
     })

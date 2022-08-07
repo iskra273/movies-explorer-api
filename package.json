@@ -6,14 +6,14 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "lint": "npx eslint --fix ."
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/iskra273/movies-explorer-api.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Irina Kraskova",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/iskra273/movies-explorer-api/issues"

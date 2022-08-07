@@ -1,8 +1,26 @@
 const { celebrate, Joi } = require('celebrate');
+const isUrl = require('validator/lib/isURL');
+const { urlError } = require('../utils/constants');
+// const { validateUrl } = require('../utils/constants');
+
+// const validateUrl = (url) => {
+//   if (!isUrl(url)) {
+//     throw new Error(urlError);
+//   }
+//   return url;
+// };
+
+const validateUrl = (url) => {
+  const validate = isUrl(url);
+  if (validate) {
+    return url;
+  }
+  throw new Error(urlError);
+};
 
 const validateUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
     email: Joi.string().required().email(),
   }),
 });
@@ -14,18 +32,18 @@ const validateMovie = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required(),
-    trailerLink: Joi.string().required(),
+    image: Joi.string().required().custom(validateUrl),
+    trailerLink: Joi.string().required().custom(validateUrl),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    thumbnail: Joi.string().required(),
+    thumbnail: Joi.string().required().custom(validateUrl),
     movieId: Joi.number().required(),
   }),
 });
 
 const validateMovieId = celebrate({
   params: Joi.object().keys({
-    MovieId: Joi.string().required().length(24).hex(),
+    movieId: Joi.string().required().length(24).hex(),
   }),
 });
 
@@ -38,7 +56,7 @@ const validateLogin = celebrate({
 
 const validateCreateUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),

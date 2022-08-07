@@ -12,7 +12,8 @@ const NotFoundError = require('./errors/NotFoundError');
 const { validateLogin, validateCreateUser } = require('./middlewares/validator');
 const { requestLogger } = require('./middlewares/request');
 const { errorLogger } = require('./middlewares/error');
-const { notFoundError, serverError, crashTest } = require('./utils/constants');
+const { notFoundError, crashTest } = require('./utils/constants');
+const handleErrors = require('./middlewares/handlerErrors');
 
 const options = {
   origin: [
@@ -26,7 +27,7 @@ const options = {
   credentials: true,
 };
 
-const { PORT = 3000, MONGO_DB = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+const { PORT = 3000, MONGO_DB = 'mongodb://localhost:27017/moviesdb' } = process.env;
 const app = express();
 
 app.use('*', cors(options));
@@ -51,25 +52,15 @@ app.post('/signup', validateCreateUser, createUser);
 app.use('/', auth, usersRouter);
 app.use('/', auth, moviesRouter);
 
-// подключаем логгер ошибок
-app.use(errorLogger);
-
 app.use((req, res, next) => {
   next(new NotFoundError(notFoundError));
 });
 
+// подключаем логгер ошибок
+app.use(errorLogger);
+
 app.use(errors());
 
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? serverError
-        : message,
-    });
-});
+app.use(handleErrors);
 
 app.listen(PORT);
