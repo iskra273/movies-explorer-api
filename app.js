@@ -4,16 +4,12 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const usersRouter = require('./routes/users');
-const moviesRouter = require('./routes/movies');
-const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const NotFoundError = require('./errors/NotFoundError');
-const { validateLogin, validateCreateUser } = require('./middlewares/validator');
+const helmet = require('helmet');
 const { requestLogger } = require('./middlewares/request');
 const { errorLogger } = require('./middlewares/error');
-const { notFoundError, crashTest } = require('./utils/constants');
 const handleErrors = require('./middlewares/handlerErrors');
+const routers = require('./routes/index');
+const { crashTest } = require('./utils/constants');
 
 const options = {
   origin: [
@@ -37,7 +33,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect(MONGO_DB);
 
-// подключаем логгер запросов
 app.use(requestLogger);
 
 // краш-тест сервера
@@ -47,16 +42,10 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', validateLogin, login);
-app.post('/signup', validateCreateUser, createUser);
-app.use('/', auth, usersRouter);
-app.use('/', auth, moviesRouter);
+app.use(helmet());
 
-app.use((req, res, next) => {
-  next(new NotFoundError(notFoundError));
-});
+app.use('/', routers);
 
-// подключаем логгер ошибок
 app.use(errorLogger);
 
 app.use(errors());
